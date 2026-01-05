@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node{
+    int data;
+    struct Node *left,*right;
+};
+
+struct Node* newNode(int v){
+    struct Node* n = malloc(sizeof(struct Node));
+    n->data = v;
+    n->left = n->right = NULL;
+    return n;
+}
+
+struct Node* insert(struct Node* r,int v){
+    if(!r) return newNode(v);
+    if(v < r->data) r->left = insert(r->left,v);
+    else if(v > r->data) r->right = insert(r->right,v);
+    return r;
+}
+
+void inorder(struct Node* r){
+    if(r){
+        inorder(r->left);
+        printf("%d ",r->data);
+        inorder(r->right);
+    }
+}
+
+void preorder(struct Node* r){
+    if(r){
+        printf("%d ",r->data);
+        preorder(r->left);
+        preorder(r->right);
+    }
+}
+
+void postorder(struct Node* r){
+    if(r){
+        postorder(r->left);
+        postorder(r->right);
+        printf("%d ",r->data);
+    }
+}
+
+struct Node* search(struct Node* r,int k){
+    if(!r || r->data == k) return r;
+    return k < r->data ? search(r->left,k) : search(r->right,k);
+}
+
+void freeBST(struct Node* r){
+    if(r){
+        freeBST(r->left);
+        freeBST(r->right);
+        free(r);
+    }
+}
+
+int main(){
+    struct Node* root = NULL;
+    int ch,key;
+    int a[]={6,9,5,2,8,15,24,14,7,8,5,2};
+    for(int i=0;i<12;i++)
+        root = insert(root,a[i]);
+
+    do{
+        printf("\n1.Inorder 2.Preorder 3.Postorder 4.Search 5.Exit\nChoice: ");
+        scanf("%d",&ch);
+
+        switch(ch){
+            case 1: printf("Inorder: "); inorder(root); break;
+            case 2: printf("Preorder: "); preorder(root); break;
+            case 3: printf("Postorder: "); postorder(root); break;
+            case 4:
+                printf("Enter element: ");
+                scanf("%d",&key);
+                printf("Element %d is %spresent in the BST.\n",
+                       key, search(root,key) ? "" : "not ");
+                break;
+            case 5:
+                freeBST(root);
+                printf("Exiting the program.\n");
+        }
+    }while(ch!=5);
+    return 0;
+}

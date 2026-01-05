@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Employee{
+    char SSN[15], Name[30], Dept[20], Designation[30];
+    float Sal;
+    long long PhNo;
+    struct Employee *next, *prev;
+};
+
+struct Employee* create(){
+    struct Employee *n = malloc(sizeof(struct Employee));
+    scanf("%s %s %s %s %f %lld",
+          n->SSN, n->Name, n->Dept, n->Designation,
+          &n->Sal, &n->PhNo);
+    n->next = n->prev = NULL;
+    return n;
+}
+
+void insertEnd(struct Employee **h, struct Employee **t){
+    struct Employee *n = create();
+    if(!*h) *h = *t = n;
+    else{
+        (*t)->next = n;
+        n->prev = *t;
+        *t = n;
+    }
+}
+
+void insertFront(struct Employee **h, struct Employee **t){
+    struct Employee *n = create();
+    if(!*h) *h = *t = n;
+    else{
+        n->next = *h;
+        (*h)->prev = n;
+        *h = n;
+    }
+}
+
+void deleteEnd(struct Employee **h, struct Employee **t){
+    if(!*h) return;
+    if(*h == *t){
+        free(*h);
+        *h = *t = NULL;
+    } else{
+        *t = (*t)->prev;
+        free((*t)->next);
+        (*t)->next = NULL;
+    }
+}
+
+void deleteFront(struct Employee **h, struct Employee **t){
+    if(!*h) return;
+    if(*h == *t){
+        free(*h);
+        *h = *t = NULL;
+    } else{
+        *h = (*h)->next;
+        free((*h)->prev);
+        (*h)->prev = NULL;
+    }
+}
+
+void display(struct Employee *h){
+    int c = 0;
+    while(h){
+        printf("%s %s %s %s %.2f %lld\n",
+               h->SSN, h->Name, h->Dept,
+               h->Designation, h->Sal, h->PhNo);
+        h = h->next;
+        c++;
+    }
+    printf("Total nodes: %d\n", c);
+}
+
+int main(){
+    struct Employee *head = NULL, *tail = NULL;
+    int ch;
+
+    do{
+        printf("\n1.Insert Front\n2.Insert End\n3.Delete Front\n4.Delete End\n5.Display\n6.Exit");
+        printf("\nEnter choice: ");
+        scanf("%d",&ch);
+
+        switch(ch){
+            case 1: insertFront(&head,&tail); break;
+            case 2: insertEnd(&head,&tail); break;
+            case 3: deleteFront(&head,&tail); break;
+            case 4: deleteEnd(&head,&tail); break;
+            case 5: display(head); break;
+            case 6: printf("Exiting...\n"); break;
+            default: printf("Invalid choice\n");
+        }
+    }while(ch!=6);
+
+    return 0;
+}
