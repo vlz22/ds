@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Term{
+    int c, x, y, z;
+    struct Term *next;
+} Term;
+
+Term* newTerm(int c, int x, int y, int z){
+    Term* t = malloc(sizeof(Term));
+    *t = (Term){c, x, y, z, t};
+    return t;
+}
+
+void insert(Term **head, int c, int x, int y, int z){
+    Term* t = newTerm(c, x, y, z);
+
+    if(!*head){
+        *head = t;
+        return;
+    }
+
+    Term* p = *head;
+    while(p->next != *head)
+        p = p->next;
+
+    p->next = t;
+    t->next = *head;
+}
+
+void display(Term *head){
+    if(!head) return;
+
+    Term* p = head;
+    do{
+        printf("%dx^%dy^%dz^%d", p->c, p->x, p->y, p->z);
+        p = p->next;
+        if(p != head) printf(" + ");
+    }while(p != head);
+
+    printf("\n");
+}
+
+Term* add(Term *a, Term *b){
+    Term* result = NULL;
+
+    do{
+        insert(&result, a->c + b->c, a->x, a->y, a->z);
+        a = a->next;
+        b = b->next;
+    }while(a != b);
+
+    return result;
+}
+
+int main(){
+    Term *p1 = NULL, *p2 = NULL, *sum;
+
+    insert(&p1,  6,2,2,1);
+    insert(&p1, -4,0,1,5);
+    insert(&p1,  3,3,1,1);
+    insert(&p1,  2,1,5,1);
+    insert(&p1, -2,1,1,3);
+    display(p1);
+
+    insert(&p2,  2,2,2,1);
+    insert(&p2,  5,0,1,5);
+    insert(&p2, -1,3,1,1);
+    display(p2);
+
+    sum = add(p1, p2);
+    display(sum);
+
+    return 0;
+}

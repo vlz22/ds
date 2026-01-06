@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct student{
+    char usn[20], name[30], prog[10], phno[15];
+    int sem;
+    struct student *next;
+};
+typedef struct student* NODE;
+
+NODE create(){
+    NODE n = malloc(sizeof(struct student));
+
+    scanf("%s %s %s %d %s",
+          n->usn,n->name,n->prog,&n->sem,n->phno);
+    n->next = NULL;
+    return n;
+}
+
+NODE insertFront(NODE h){
+    NODE n = create();
+    n->next = h;
+    return n;
+}
+
+NODE insertEnd(NODE h){
+    NODE n = create(), t = h;
+    if(!h) return n;
+    while(t->next) t = t->next;
+    t->next = n;
+    return h;
+}
+
+NODE deleteFront(NODE h){
+    NODE t = h;
+    h = h->next;
+    free(t);
+    return h;
+}
+
+NODE deleteEnd(NODE h){
+    if(!h){ printf("List empty\n"); return NULL; }
+    if(!h->next){
+        free(h); return NULL;
+    }
+    NODE p=h, c=h->next;
+    while(c->next){ p=c; c=c->next; }
+    free(c); p->next=NULL;
+    return h;
+}
+
+void display(NODE h){
+    int c=0;
+    if(!h){ printf("List empty\n"); return; }
+    while(h){
+        printf("%s %s %s %d %s\n",
+               h->usn,h->name,h->prog,h->sem,h->phno);
+        h=h->next; c++;
+    }
+    printf("Total nodes = %d\n", c);
+}
+
+int main(){
+    NODE head=NULL;
+    int ch,n;
+
+    while(1){
+        printf("\n1.Create(F) 2.Display 3.InsertEnd 4.DeleteEnd 5.insert front 6.delete front 7.Exit\n");
+        scanf("%d",&ch);
+
+        switch(ch){
+            case 1: insertFront(head);break;
+            case 2: display(head); break;
+            case 3: head = insertEnd(head); break;
+            case 4: head = deleteEnd(head); break;
+            case 5: head = insertFront(head); break;
+            case 6: head = deleteFront(head); break;
+            case 7: exit(0);
+            default: printf("Invalid choice\n");
+        }
+    }
+}
